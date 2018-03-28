@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import './App.css';
+import classes from './App.css';
 import Person from './Person/Person';
 
 class App extends Component {
@@ -10,12 +10,11 @@ class App extends Component {
             {name: 'Sean', age: 19, id: 2},
         ],
         showPersons: false
-    };
-    nameChangedHandler = (event, id ) => {
 
-        const personIndex = this.state.persons.findIndex(p => {
-            return p.id === id;
-        });
+    };
+    nameChangedHandler = (event, id) => {
+
+        const personIndex = this.state.persons.findIndex(p => p.id === id);
         const person = {...this.state.persons[personIndex]};
 
         person.name = event.target.value;
@@ -24,7 +23,7 @@ class App extends Component {
 
         persons[personIndex] = person;
 
-        this.setState({persons: persons});
+        this.setState({persons});
     };
 
     toggleShowHandler = () => {
@@ -40,16 +39,11 @@ class App extends Component {
     };
 
     render() {
-        const style = {
-            backgroundColor: 'green',
-            color: 'white',
-            font: 'inherit',
-            padding: '8px',
-            cursor: 'pointer'
-        };
-
         let persons = null;
-        if(this.state.showPersons){
+
+        let btnClass= '';
+
+        if (this.state.showPersons) {
             persons = (
                 <div>
                     {this.state.persons.map((person, index) => {
@@ -65,20 +59,21 @@ class App extends Component {
                     })}
                 </div>
             );
-            style.backgroundColor = 'red';
+            btnClass = classes.Red;
         }
-        const classes =[];
-        if(this.state.persons.length <= 2){
-            classes.push('red');
+
+        const assignedClasses = [];
+        if (this.state.persons.length <= 2) {
+            assignedClasses.push(classes.red);
         }
-        if(this.state.persons.length <= 1){
-            classes.push('bold');
+        if (this.state.persons.length <= 1) {
+            assignedClasses.push(classes.bold);
         }
         return (
-            <div className="App">
+            <div className={classes.App}>
                 <h1>Hi, I am react app</h1>
-                <p className={classes.join(' ')}>This is really working</p>
-                <button style={style} onClick={this.toggleShowHandler}>Toggle People</button>
+                <p className={assignedClasses.join(' ')}>This is really working</p>
+                <button className={btnClass} onClick={this.toggleShowHandler}>Toggle People</button>
                 {persons}
             </div>
         );
