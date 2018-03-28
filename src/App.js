@@ -1,83 +1,86 @@
-import React, {Component} from 'react';
-import classes from './App.css';
-import Person from './Person/Person';
+import React, { Component } from "react";
+import classes from "./App.css";
+import Person from "./Person/Person";
+import ErrorBoundry from "./ErrorBoundary/ErrorBoundary";
 
 class App extends Component {
-    state = {
-        persons: [
-            {name: 'Max', age: 12, id: 0},
-            {name: 'Michael', age: 16, id: 1},
-            {name: 'Sean', age: 19, id: 2},
-        ],
-        showPersons: false
+  state = {
+    persons: [
+      { name: "Max", age: 12, id: 0 },
+      { name: "Michael", age: 16, id: 1 },
+      { name: "Sean", age: 19, id: 2 }
+    ],
+    showPersons: false
+  };
+  nameChangedHandler = (event, id) => {
+    const personIndex = this.state.persons.findIndex(p => p.id === id);
+    const person = { ...this.state.persons[personIndex] };
 
-    };
-    nameChangedHandler = (event, id) => {
+    person.name = event.target.value;
 
-        const personIndex = this.state.persons.findIndex(p => p.id === id);
-        const person = {...this.state.persons[personIndex]};
+    const persons = [...this.state.persons];
 
-        person.name = event.target.value;
+    persons[personIndex] = person;
 
-        const persons = [...this.state.persons];
+    this.setState({ persons });
+  };
 
-        persons[personIndex] = person;
+  toggleShowHandler = () => {
+    const doesShow = this.state.showPersons;
+    this.setState({
+      showPersons: !doesShow
+    });
+  };
+  deletePersonHandler = index => {
+    const persons = [...this.state.persons];
+    persons.splice(index, 1);
+    this.setState({ persons: persons });
+  };
 
-        this.setState({persons});
-    };
+  render() {
+    let persons = null;
 
-    toggleShowHandler = () => {
-        const doesShow = this.state.showPersons;
-        this.setState({
-            showPersons: !doesShow
-        })
-    };
-    deletePersonHandler = (index) => {
-        const persons = [...this.state.persons];
-        persons.splice(index, 1);
-        this.setState({persons: persons})
-    };
+    let btnClass = "";
 
-    render() {
-        let persons = null;
-
-        let btnClass= '';
-
-        if (this.state.showPersons) {
-            persons = (
-                <div>
-                    {this.state.persons.map((person, index) => {
-                        return (
-                            <Person
-                                name={person.name}
-                                age={person.age}
-                                click={() => this.deletePersonHandler(index)}
-                                key={person.id}
-                                changed={(event) => this.nameChangedHandler(event, person.id)}>
-                            </Person>
-                        )
-                    })}
-                </div>
+    if (this.state.showPersons) {
+      persons = (
+        <div>
+          {this.state.persons.map((person, index) => {
+            return (
+              <ErrorBoundry key={person.id}>
+                <Person
+                  name={person.name}
+                  age={person.age}
+                  click={() => this.deletePersonHandler(index)}
+                  changed={event => this.nameChangedHandler(event, person.id)}
+                />
+              </ErrorBoundry>
             );
-            btnClass = classes.Red;
-        }
-
-        const assignedClasses = [];
-        if (this.state.persons.length <= 2) {
-            assignedClasses.push(classes.red);
-        }
-        if (this.state.persons.length <= 1) {
-            assignedClasses.push(classes.bold);
-        }
-        return (
-            <div className={classes.App}>
-                <h1>Hi, I am react app</h1>
-                <p className={assignedClasses.join(' ')}>This is really working</p>
-                <button className={btnClass} onClick={this.toggleShowHandler}>Toggle People</button>
-                {persons}
-            </div>
-        );
+          })}
+        </div>
+      );
+      btnClass = classes.Red;
     }
+
+    const assignedClasses = [];
+    if (this.state.persons.length <= 2) {
+      assignedClasses.push(classes.red);
+    }
+
+    if (this.state.persons.length <= 1) {
+      assignedClasses.push(classes.bold);
+    }
+    return (
+      <div className={classes.App}>
+        <h1>Hi, I am react app</h1>
+        <p className={assignedClasses.join(" ")}>This is really working</p>
+        <button className={btnClass} onClick={this.toggleShowHandler}>
+          Toggle People
+        </button>
+        {persons}
+      </div>
+    );
+  }
 }
 
 export default App;
